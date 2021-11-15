@@ -4,7 +4,7 @@ import {FaBars} from 'react-icons/fa';
 
 export const Nav = styled.nav`
 
-    background: #F8F9FA;
+    background: white;
     height: 80px;
     display: flex;
     justify-content: space-between;
@@ -27,7 +27,7 @@ export const NavLink = styled(Link)`
     cursor: pointer;
 
     &.active {
-        color: #15cdfc;
+        color: #ABB94E;
     }
 `;
 
@@ -53,9 +53,9 @@ export const NavMenu = styled.div`
     align-items: center;
     margin-right: 24px;
 
-    //nav left and button right
-    // width: 100vw;
-    // white-space: no-wrap;
+    nav left and button right
+    width: 100vw;
+    white-space: no-wrap;
 
     // @media screen and (max-width: 768px) {
     //     display: none;
@@ -67,6 +67,19 @@ export const NavBtn = styled.nav`
     display: flex;
     align-items: center;
     margin-right: 24px;
+    background: #FFDF58;
+    padding: 10px 22px;
+    margin-left: 24px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+
+    &:hover{
+        transition: all 0.2s ease-in-out;
+        background: #ABB94E;
+    }
 
     //nav left and button right
     // justify-content: flex-end;
@@ -80,10 +93,9 @@ export const NavBtn = styled.nav`
 export const NavBtnLink = styled(Link)`
 
     border-radius: 4px;
-    background: #15CDFC;
+    background: #FFDF58;
     padding: 10px 22px;
     margin-left: 24px;
-    color: #fff;
     outline: none;
     border: none;
     cursor: pointer;
@@ -92,6 +104,6 @@ export const NavBtnLink = styled(Link)`
 
     &:hover{
         transition: all 0.2s ease-in-out;
-        background: #256ce1;
+        background: #ABB94E;
     }
 `;

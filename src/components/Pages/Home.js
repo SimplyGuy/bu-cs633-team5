@@ -39,7 +39,7 @@ function Home() {
         root: {
             margin: '10px',
             width: '100%',
-            maxWidth: 700,
+            maxWidth: 800,
             backgroundColor: theme.palette.background.paper,
         },
         formControl: {
@@ -57,7 +57,18 @@ function Home() {
         },
         section2: {
             margin: theme.spacing(2),
-        }
+        },
+        searchBtn: {
+            height: '40px',
+            width: '70px',
+            fontSize: '12px',
+            marginRight: '14px',
+            marginTop: '30px',
+            borderRadius: '6px',
+            border: 'white',
+            backgroundColor: '#ABB94E',
+            cursor: 'pointer',
+          },
     }));
 
     const ITEM_HEIGHT = 48;
@@ -197,21 +208,20 @@ function Home() {
 
 
     return (
-        <div>
+        <div style={{backgroundColor: '#F8F9FA'}}>
             <Header />
-            <div className="container" style={{ display: 'flex', flexDirection: "column", alignItems: "center", margin: "20px" }}>
-
+            <div className="container" style={{ display: 'flex', flexDirection: "column", alignItems: "center", padding: "20px" }}>
                 <Card style={{width: "800px"}}>
                     <div className={classes.search} >
                         <div style={{ display: "flex"}}>
-                            <Avatar
+                            {/* <Avatar
                                 aria-label="recipe"
                                 className={classes.avatar}
                                 style={{ margin: "20px" }}
                             >U
-                            </Avatar>
+                            </Avatar> */}
                             <TextField
-                                placeholder="Share something"
+                                placeholder="Search something..."
                                 multiline
                                 style={{ margin: "20px", width: "800px" }}
                             />
@@ -312,7 +322,7 @@ function Home() {
                                     </Select>
                                 </FormControl>
                             </div>
-                            <Button
+                            {/* <Button
                                 color="primary"
                                 variant="contained"
                                 style={{
@@ -321,7 +331,8 @@ function Home() {
                                     marginRight: '14px',
                                     marginTop: '30px',
                                 }}
-                            >Submit</Button>
+                            >Search</Button> */}
+                            <button className={classes.searchBtn}>Search</button>
                         </div>
                     </div>
                 </Card>
