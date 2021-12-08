@@ -1,4 +1,6 @@
-import React, { userState } from 'react';
+import React, {useEffect} from 'react';
+import useState from 'react-usestateref';
+
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -22,14 +24,31 @@ import Select from '@material-ui/core/Select';
 import { Nav, NavLink, Bars, NavMenu, NavBtn, NavBtnLink } from './NavBarElements';
 import logo from '../../images/logo.png';
 import './Header.css';
+import moment from 'moment';
 
-function Header() {
+const Header = ({sendSubmitContent, ifSignIn}) => {
 
-    const [open, setOpen] = React.useState(false);
-    const [mallTag, setMallTags] = React.useState([]);
-    const [statusTag, setStatusTags] = React.useState([]);
-    const [productTag, setProductTags] = React.useState([]);
-    const [areaTag, setAreaTags] = React.useState([]);
+    const [open, setOpen] = useState(false);
+    const [mallTag, setMallTags] = useState([]);
+    const [statusTag, setStatusTags] = useState([]);
+    const [productTag, setProductTags] = useState([]);
+    const [areaTag, setAreaTags] = useState([]);
+    const [ifLogin, setIfLogin, ifLoginRef] = useState(false);
+    const [submitContent, setSubmitContent, submitContentRef] = useState({
+        inputDate: "",
+        inputContent: "",
+        inputMall: "",
+        inputStatus: "",
+        inputProduct: "",
+        inputArea: "",
+    });
+    const [newPost, setNewPost] = useState([]);
+
+    useEffect(() => {
+
+        setIfLogin(ifSignIn ? ifSignIn.ifLogin : false);     
+    })
+
 
     const useStyles = makeStyles((theme) => ({
         search: {
@@ -118,19 +137,60 @@ function Header() {
         };
     }
 
+    const handleContentChange = (event) => {
+        let currentDate = new Date();
+        let inputDate = moment(currentDate).format('MMMM DD, YYYY');
+        setSubmitContent((prevState) => ({
+            ...prevState,
+            inputContent: event.target.value,
+            inputDate: inputDate,
+            })
+        );
+    };
     const handleMallChange = (event) => {
+        let currentDate = new Date();
+        let inputDate = moment(currentDate).format('MMMM DD, YYYY');
         setMallTags(event.target.value);
+        setSubmitContent((prevState) => ({
+            ...prevState,
+            inputMall: event.target.value,
+            inputDate: inputDate,
+            })
+        );
     };
     const handleProductChange = (event) => {
+        let currentDate = new Date();
+        let inputDate = moment(currentDate).format('MMMM DD, YYYY');
         setProductTags(event.target.value);
+        setSubmitContent((prevState) => ({
+            ...prevState,
+            inputProduct: event.target.value,
+            inputDate: inputDate,
+            })
+        );
     };
     const handleStatusChange = (event) => {
+        let currentDate = new Date();
+        let inputDate = moment(currentDate).format('MMMM DD, YYYY');
         setStatusTags(event.target.value);
+        setSubmitContent((prevState) => ({
+            ...prevState,
+            inputStatus: event.target.value,
+            inputDate: inputDate,
+            })
+        );
     };
     const handleAreaChange = (event) => {
+        let currentDate = new Date();
+        let inputDate = moment(currentDate).format('MMMM DD, YYYY');
         setAreaTags(event.target.value);
+        setSubmitContent((prevState) => ({
+            ...prevState,
+            inputArea: event.target.value,
+            inputDate: inputDate,
+            })
+        );
     };
-
 
     const handleMallChangeMultiple = (event) => {
         const { options } = event.target;
@@ -177,6 +237,7 @@ function Header() {
 
     const mallTagList = [
 
+        'None',
         'Walmart',
         'Bestbuy',
         'CVS',
@@ -185,6 +246,7 @@ function Header() {
 
     const productTagList = [
 
+        'None',
         'Blanket',
         'Hand Sanitizer',
         'Laptop',
@@ -192,7 +254,8 @@ function Header() {
     ];
 
     const statusTagList = [
-
+        
+        'None',
         'Sufficient',
         'Shortage',
         'Few Left',
@@ -201,17 +264,26 @@ function Header() {
 
     const areaTagList = [
 
+        'None',
         'Allston',
-        'Brookline'
+        'Brookline',
+        'Quincy',
+        'Fenway'
     ];
 
     const handleClickOpen = () => {
+        setMallTags([]);
+        setProductTags([]);
+        setStatusTags([]);
+        setAreaTags([]);
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
     };
+
+    
 
     return (
         <Nav>
@@ -222,13 +294,24 @@ function Header() {
             </NavLink>
             {/* <Bars /> */}
             <NavMenu>
-                <NavLink to="/home">Home</NavLink>
-                <NavLink to="/about">About Us</NavLink>
-                <NavLink to="/contact">Contact Us</NavLink>
-                <NavLink to="/signup">Sign Up</NavLink>
-                <NavLink to="/signin">Sign In</NavLink>
-                <NavBtn onClick={handleClickOpen}>Post</NavBtn>
-                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="lg">
+                <NavLink to={{
+                    pathname: "/home",  
+                    state: ifSignIn
+                    }}>Home</NavLink>
+                <NavLink to={{
+                    pathname: "/about",
+                    state: ifSignIn
+                    }}>About Us</NavLink>
+                <NavLink to={{
+                    pathname: "/contact",
+                    state: ifSignIn,
+                }}>Contact Us</NavLink>
+                { ifLoginRef.current ? <NavLink to={{pathname: "/home", state: {ifLogin: false, role: 'visitor'}}}>Sign Out</NavLink> : '' }
+                { ifLoginRef.current ? '' : <NavLink to= {{pathname:"/signup", state: ifSignIn}}>Sign Up</NavLink>}
+                { ifLoginRef.current ? '' : <NavLink to= {{pathname:"/signin", state: ifSignIn}}>Sign In</NavLink>}
+                
+                { ifLoginRef.current ? <NavBtn onClick={handleClickOpen}>Post</NavBtn> : ''}
+                { ifLoginRef.current ? <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="lg">
                     <DialogContent>
                         <div style={{ width: "800px" }}>
                             <div className={classes.search} >
@@ -237,6 +320,7 @@ function Header() {
                                         placeholder="Share something..."
                                         multiline
                                         style={{ margin: "20px", width: "800px" }}
+                                        onChange={handleContentChange}
                                     />
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -257,7 +341,7 @@ function Header() {
                                                 MenuProps={MenuProps}
                                             >
                                                 {mallTagList.map((mall) => (
-                                                    <MenuItem key={mall} value={mall}>
+                                                    <MenuItem key={mall} value={mall == 'None' ? '' : mall}>
                                                         <Checkbox checked={mallTag.indexOf(mall) > -1} />
                                                         <ListItemText primary={mall} />
                                                     </MenuItem>
@@ -280,7 +364,7 @@ function Header() {
                                                 MenuProps={MenuProps}
                                             >
                                                 {productTagList.map((product) => (
-                                                    <MenuItem key={product} value={product}>
+                                                    <MenuItem key={product} value={product == 'None' ? '' : product}>
                                                         <Checkbox checked={productTag.indexOf(product) > -1} />
                                                         <ListItemText primary={product} />
                                                     </MenuItem>
@@ -303,7 +387,7 @@ function Header() {
                                                 MenuProps={MenuProps}
                                             >
                                                 {statusTagList.map((status) => (
-                                                    <MenuItem key={status} value={status}>
+                                                    <MenuItem key={status} value={status == 'None' ? '' : status}>
                                                         <Checkbox checked={statusTag.indexOf(status) > -1} />
                                                         <ListItemText primary={status} />
                                                     </MenuItem>
@@ -326,7 +410,7 @@ function Header() {
                                                 MenuProps={MenuProps}
                                             >
                                                 {areaTagList.map((area) => (
-                                                    <MenuItem key={area} value={area}>
+                                                    <MenuItem key={area} value={area == 'None' ? '' : area}>
                                                         <Checkbox checked={areaTag.indexOf(area) > -1} />
                                                         <ListItemText primary={area} />
                                                     </MenuItem>
@@ -342,11 +426,141 @@ function Header() {
                         <Button onClick={handleClose} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={handleClose} color="primary">
+                        <Button 
+                            onClick={() => {
+                                sendSubmitContent(submitContent);
+                                setOpen(false);
+                            }} 
+                        color="primary">
                             Submit
                         </Button>
                     </DialogActions>
-                </Dialog>
+                </Dialog> : ''}
+                {/* <NavBtn onClick={handleClickOpen}>Post</NavBtn> */}
+                {/* <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title" maxWidth="lg">
+                    <DialogContent>
+                        <div style={{ width: "800px" }}>
+                            <div className={classes.search} >
+                                <div style={{ display: "flex" }}>
+                                    <TextField
+                                        placeholder="Share something..."
+                                        multiline
+                                        style={{ margin: "20px", width: "800px" }}
+                                        onChange={handleContentChange}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <div style={{ display: 'flex' }}>
+                                        <FormControl className={classes.formControl}>
+                                            <InputLabel id="mutiple-mall-label" style={{ fontSize: '15px' }}>Mall Tag</InputLabel>
+                                            <Select
+                                                id="mall-mutiple-chip"
+                                                // multiple
+                                                value={mallTag}
+                                                onChange={handleMallChange}
+                                                input={<Input id="select-multiple-chip" />}
+                                                renderValue={(selected) => (
+                                                    <div className={classes.chips}>
+                                                        <Chip key={selected} label={selected} className={classes.chip} />
+                                                    </div>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {mallTagList.map((mall) => (
+                                                    <MenuItem key={mall} value={mall == 'None' ? '' : mall}>
+                                                        <Checkbox checked={mallTag.indexOf(mall) > -1} />
+                                                        <ListItemText primary={mall} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl className={classes.formControl}>
+                                            <InputLabel id="mutiple-product-label" style={{ fontSize: '15px' }}>Product Tag</InputLabel>
+                                            <Select
+                                                id="product-mutiple-chip"
+                                                // multiple
+                                                value={productTag}
+                                                onChange={handleProductChange}
+                                                input={<Input id="select-multiple-chip" />}
+                                                renderValue={(selected) => (
+                                                    <div className={classes.chips}>
+                                                        <Chip key={selected} label={selected} className={classes.chip} />
+                                                    </div>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {productTagList.map((product) => (
+                                                    <MenuItem key={product} value={product == 'None' ? '' : product}>
+                                                        <Checkbox checked={productTag.indexOf(product) > -1} />
+                                                        <ListItemText primary={product} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl className={classes.formControl}>
+                                            <InputLabel id="mutiple-status-label" style={{ fontSize: '15px' }}>Status Tag</InputLabel>
+                                            <Select
+                                                id="status-mutiple-chip"
+                                                // multiple
+                                                value={statusTag}
+                                                onChange={handleStatusChange}
+                                                input={<Input id="select-multiple-chip" />}
+                                                renderValue={(selected) => (
+                                                    <div className={classes.chips}>
+                                                        <Chip key={selected} label={selected} className={classes.chip} />
+                                                    </div>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {statusTagList.map((status) => (
+                                                    <MenuItem key={status} value={status == 'None' ? '' : status}>
+                                                        <Checkbox checked={statusTag.indexOf(status) > -1} />
+                                                        <ListItemText primary={status} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl className={classes.formControl}>
+                                            <InputLabel id="mutiple-status-label" style={{ fontSize: '15px' }}>Area Tag</InputLabel>
+                                            <Select
+                                                id="status-mutiple-chip"
+                                                // multiple
+                                                value={areaTag}
+                                                onChange={handleAreaChange}
+                                                input={<Input id="select-multiple-chip" />}
+                                                renderValue={(selected) => (
+                                                    <div className={classes.chips}>
+                                                        <Chip key={selected} label={selected} className={classes.chip} />
+                                                    </div>
+                                                )}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {areaTagList.map((area) => (
+                                                    <MenuItem key={area} value={area == 'None' ? '' : area}>
+                                                        <Checkbox checked={areaTag.indexOf(area) > -1} />
+                                                        <ListItemText primary={area} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Cancel
+                        </Button>
+                        <Button 
+                            onClick={() => {
+                                sendSubmitContent(submitContent);
+                            }} 
+                        color="primary">
+                            Submit
+                        </Button>
+                    </DialogActions>
+                </Dialog> */}
             </NavMenu>
             {/* <TextField
                 label="Search"

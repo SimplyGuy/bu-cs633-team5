@@ -1,4 +1,6 @@
 import React from 'react';
+import useState from 'react-usestateref';
+
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from 'react-router-dom';
@@ -7,7 +9,11 @@ import logo from '../../images/logo.png';
 import "./SignIn.css";
 
 
-const SignIn = () => {
+const SignIn = (props) => {
+
+
+  const [username, setUsername, usernameRef] = useState("");
+  const [password, setPassword, passwordRef] = useState("");
 
   const useStyles = makeStyles((theme) => ({
     root: {
@@ -39,11 +45,6 @@ const SignIn = () => {
 
   const history = useHistory();
 
-  const handleSignIn = () => {
-    let path = "/home";
-    history.push(path);
-  }
-
   const handleGuest = () => {
     let path = "/home";
     history.push(path);
@@ -54,6 +55,48 @@ const SignIn = () => {
     history.push(path);
   }
 
+  const adminAccount = {
+    username: 'admin',
+    password: 'admin'
+  }
+
+  const userAccount = {
+    username: 'user',
+    password: '12345'
+  }
+
+  const handleUserName = (event) => {
+    let inputUsername = event.target.value;
+    setUsername(inputUsername);
+  }
+
+  const handlePassword = (event) => {
+    let inputPassword = event.target.value;
+    setPassword(inputPassword);
+  }
+
+  const handleSignIn = () => {
+    console.log("Clicked");
+    if (usernameRef.current == adminAccount.username && passwordRef.current == adminAccount.password) {
+      let path = "/home";
+      let ifLogin = true;
+      let role = 'admin';
+      history.push({
+        pathname: path,
+        state: {ifLogin, role}
+      });
+    }
+    else if (usernameRef.current == userAccount.username && passwordRef.current == userAccount.password) {
+      let path = "/home";
+      let ifLogin = true;
+      let role = 'user';
+      history.push({
+        pathname: path,
+        state: {ifLogin, role}
+      });
+    }
+    
+  }
 
   const classes = useStyles();
 
@@ -67,8 +110,8 @@ const SignIn = () => {
           height: '90vh',
           flexDirection: 'column'}} >
         <img src={logo} alt="logo" style={{ height: "200px", width: "200px", paddingBottom: '60px' }} />
-        <TextField className={classes.inputTextField} id="signInUserName" label="Username" variant="outlined"/>
-        <TextField className={classes.inputTextField} id="signInPassword" label="Password" variant="outlined" />
+        <TextField className={classes.inputTextField} onChange={handleUserName} id="signInUserName" label="Username" variant="outlined"/>
+        <TextField className={classes.inputTextField} onChange={handlePassword} id="signInPassword" label="Password" variant="outlined" />
         <button className={classes.signInBtn} onClick={handleSignIn} type="button">Sign In</button>
         <a style={{
           fontSize: '15px',

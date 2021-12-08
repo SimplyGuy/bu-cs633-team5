@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from 'react-router-dom';
@@ -9,9 +9,13 @@ import logo from '../../images/logo.png';
 
 
 
-const SignUp = () => {
+const SignUp = (props) => {
 
   const [checkStatus, setCheckStatus] = React.useState(true);
+
+  useEffect(() => {
+    console.log(props.location.state)
+  })
 
   const useStyles = makeStyles((theme) => ({
     inputTextField: {

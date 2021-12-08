@@ -1,4 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import useState from 'react-usestateref';
+
 import Header from '../NavBar/Header';
 import './Home.css';
 
@@ -24,12 +26,99 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 
-function Home() {
+function Home(props) {
 
-    const [mallTag, setMallTags] = React.useState([]);
-    const [statusTag, setStatusTags] = React.useState([]);
-    const [productTag, setProductTags] = React.useState([]);
-    const [areaTag, setAreaTags] = React.useState([]);
+    const [mallTag, setMallTags, mallTagRef] = useState([]);
+    const [statusTag, setStatusTags] = useState([]);
+    const [productTag, setProductTags] = useState([]);
+    const [areaTag, setAreaTags] = useState([]);
+    
+    const [ifInit, setIfInit, ifInitRef] = useState(false);
+    const [userIdentity, setUserIdentity] = useState("Visitor");
+    const [ifSignIn, setIfSignIn, ifSignInRef] = useState(false);
+    const [searchContent, setSearchContent, searchContentRef] = useState({
+        selectedContent: "",
+        selectedMall: "",
+        selectedStatus: "",
+        selectedProduct: "",
+        selectedArea: "",
+    });
+    const [allPosts, setAllPosts, allPostsRef] = useState([]);
+    const [displayPosts, setDisplayPosts, displayPostsRef] = useState([]);
+
+    useEffect(() => {
+        if (!ifInitRef.current) {
+            initializePosts();
+            setIfInit(true);
+        }
+        setIfSignIn(props.location.state ? props.location.state : false);
+        console.log(ifSignInRef.current);
+    })
+
+    const handleSearch = (event) => {
+
+        let selectedContent = searchContentRef.current.selectedContent;
+        let selectedMall = searchContentRef.current.selectedMall;
+        let selectedStatus = searchContentRef.current.selectedStatus;
+        let selectedProduct = searchContentRef.current.selectedProduct;
+        let selectedArea = searchContentRef.current.selectedArea;
+        let sortedPost = allPosts.filter((post) => {
+            return post[1].includes(selectedContent);
+        }).filter((post) => {
+            if (selectedMall) {
+                return post[2] == selectedMall;
+            }
+            return post;
+        }).filter((post) => {
+            if (selectedStatus) {
+                return post[3] == selectedStatus
+            }
+            return post;
+        }).filter((post) => {
+            if (selectedProduct) {
+                return post[4] == selectedProduct
+            }
+            return post;
+        }).filter((post) => {
+            if (selectedArea) {
+                return post[5] == selectedArea
+            }
+            return post;
+        });
+        console.log(sortedPost);
+        setDisplayPosts(sortedPost);
+        console.log(displayPostsRef);
+    }
+
+    const initializePosts = () => {
+
+        let postList = [];
+        let numOfPosts = 5;
+        for (let i = 1; i < numOfPosts; i++) {
+            let tempPost = [dateList[i-1], contentList[i-1], mallTagList[i], productTagList[i], statusTagList[i], areaTagList[i]]
+            postList.push(tempPost);
+        }
+        setAllPosts(postList);
+        setDisplayPosts(postList);
+    }
+
+    const handleDelete = (event) => {
+        
+        let index = event.target.getAttribute('index');
+        let getAllPost = [...allPosts];
+        getAllPost.splice(index, 1);
+        setAllPosts(getAllPost);
+        setDisplayPosts(allPostsRef.current);
+    }
+
+    const sendSubmitContent = (data) => {
+        console.log(data);        
+        let formatData = [data.inputDate, data.inputContent, data.inputMall, data.inputProduct, data.inputStatus, data.inputArea];
+        setAllPosts((prevState) => [formatData, ...prevState]);
+        console.log(allPostsRef.current);
+        setDisplayPosts(allPostsRef.current);
+        console.log(displayPostsRef.current);
+    }
 
     const useStyles = makeStyles((theme) => ({
         search: {
@@ -68,7 +157,18 @@ function Home() {
             border: 'white',
             backgroundColor: '#ABB94E',
             cursor: 'pointer',
-          },
+        },
+        deleteBtn: {
+            height: '30px',
+            width: '60px',
+            marginLeft: '710px',
+            fontSize: '12px',
+            borderRadius: '6px',
+            color: 'white',
+            border: 'white',
+            backgroundColor: 'red',
+            cursor: 'pointer',
+        }
     }));
 
     const ITEM_HEIGHT = 48;
@@ -118,19 +218,49 @@ function Home() {
         };
     }
 
+    
+    const handleContentChange = (event) => {
+        setSearchContent((prevState) => ({
+            ...prevState,
+            selectedContent: event.target.value
+            })
+        );
+    };
     const handleMallChange = (event) => {
         setMallTags(event.target.value);
+        setSearchContent((prevState) => ({
+            ...prevState,
+            selectedMall: event.target.value
+            })
+        );
     };
     const handleProductChange = (event) => {
         setProductTags(event.target.value);
+        setSearchContent((prevState) => ({
+            ...prevState,
+            selectedProduct: event.target.value
+            })
+        );
+
     };
     const handleStatusChange = (event) => {
         setStatusTags(event.target.value);
+        setSearchContent((prevState) => ({
+            ...prevState,
+            selectedStatus: event.target.value
+            })
+        );
+
     };
     const handleAreaChange = (event) => {
         setAreaTags(event.target.value);
-    };
+        setSearchContent((prevState) => ({
+            ...prevState,
+            selectedArea: event.target.value
+            })
+        );
 
+    };
 
     const handleMallChangeMultiple = (event) => {
         const { options } = event.target;
@@ -176,8 +306,24 @@ function Home() {
     const classes = useStyles();
     const theme = useTheme();
 
+    const dateList = [
+
+        "October 20th, 2021",
+        "October 16th, 2021",
+        "October 15th, 2021",
+        "October 14th, 2021",
+    ]
+
+    const contentList = [
+        "I went to walmart for blanket, and there are a lot",
+        "I went to bestbuy for hand sanitizer, but there are not much left",
+        "I went to CVS for laptop, but there are only two left",
+        "I went to stop&shop for milk, there are only 0% fat ones"
+    ]
+
     const mallTagList = [
 
+        'None',
         'Walmart',
         'Bestbuy',
         'CVS',
@@ -186,6 +332,7 @@ function Home() {
 
     const productTagList = [
 
+        'None',
         'Blanket',
         'Hand Sanitizer',
         'Laptop',
@@ -193,7 +340,8 @@ function Home() {
     ];
 
     const statusTagList = [
-
+        
+        'None',
         'Sufficient',
         'Shortage',
         'Few Left',
@@ -202,31 +350,27 @@ function Home() {
 
     const areaTagList = [
 
+        'None',
         'Allston',
-        'Brookline'
+        'Brookline',
+        'Quincy',
+        'Fenway'
     ];
-
 
     return (
         <div style={{backgroundColor: '#F8F9FA'}}>
-            <Header />
+            <Header sendSubmitContent={sendSubmitContent} ifSignIn={props.location.state ? props.location.state : false}/>
             <div className="container" style={{ display: 'flex', flexDirection: "column", alignItems: "center", padding: "20px" }}>
                 <Card style={{width: "800px"}}>
                     <div className={classes.search} >
                         <div style={{ display: "flex"}}>
-                            {/* <Avatar
-                                aria-label="recipe"
-                                className={classes.avatar}
-                                style={{ margin: "20px" }}
-                            >U
-                            </Avatar> */}
                             <TextField
                                 placeholder="Search something..."
                                 multiline
                                 style={{ margin: "20px", width: "800px" }}
+                                onChange={handleContentChange}
                             />
                         </div>
-                        {/* <Divider variant="middle" /> */}
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                             <div style={{ display: 'flex' }}>
                                 <FormControl className={classes.formControl}>
@@ -243,9 +387,9 @@ function Home() {
                                             </div>
                                         )}
                                         MenuProps={MenuProps}
-                                    >
+                                    >   
                                         {mallTagList.map((mall) => (
-                                            <MenuItem key={mall} value={mall}>
+                                            <MenuItem key={mall} value={mall == 'None' ? '' : mall}>
                                                 <Checkbox checked={mallTag.indexOf(mall) > -1} />
                                                 <ListItemText primary={mall} />
                                             </MenuItem>
@@ -268,7 +412,7 @@ function Home() {
                                         MenuProps={MenuProps}
                                     >
                                         {productTagList.map((product) => (
-                                            <MenuItem key={product} value={product}>
+                                            <MenuItem key={product} value={product == 'None' ? '' : product}>
                                                 <Checkbox checked={productTag.indexOf(product) > -1} />
                                                 <ListItemText primary={product} />
                                             </MenuItem>
@@ -291,7 +435,7 @@ function Home() {
                                         MenuProps={MenuProps}
                                     >
                                         {statusTagList.map((status) => (
-                                            <MenuItem key={status} value={status}>
+                                            <MenuItem key={status} value={status == 'None' ? '' : status}>
                                                 <Checkbox checked={statusTag.indexOf(status) > -1} />
                                                 <ListItemText primary={status} />
                                             </MenuItem>
@@ -314,7 +458,7 @@ function Home() {
                                         MenuProps={MenuProps}
                                     >
                                         {areaTagList.map((area) => (
-                                            <MenuItem key={area} value={area}>
+                                            <MenuItem key={area} value={area == 'None' ? '' : area}>
                                                 <Checkbox checked={areaTag.indexOf(area) > -1} />
                                                 <ListItemText primary={area} />
                                             </MenuItem>
@@ -332,12 +476,41 @@ function Home() {
                                     marginTop: '30px',
                                 }}
                             >Search</Button> */}
-                            <button className={classes.searchBtn}>Search</button>
+                            <button className={classes.searchBtn} onClick={handleSearch}>Search</button>
                         </div>
                     </div>
                 </Card>
+                {displayPosts && displayPosts.map(
+                    (post, index) => 
+                        <Card className={classes.root} key={index}>
+                            <CardHeader
+                                avatar={
+                                    <Avatar aria-label="recipe" className={classes.avatar}>
+                                        U
+                                    </Avatar>
+                                }
+                                subheader={post[0]}
+                            />
+                            <CardContent>
+                                <Typography variant="body1" color="textPrimary" component="p">
+                                    {post[1]}
+                                </Typography>
+                            </CardContent>
+                            <Divider variant="middle" />
+                            <div className={classes.section2}>
+                                <div>
+                                    <Chip className={classes.commentChip} label={post[2]} />
+                                    <Chip className={classes.commentChip} label={post[3]} />
+                                    <Chip className={classes.commentChip} label={post[4]} />
+                                    <Chip className={classes.commentChip} label={post[5]} />
+                                </div>
+                                {ifSignInRef.current.role == "admin" ? <button index={index} className={classes.deleteBtn} onClick={handleDelete}>Delete</button> : ''}
+                            </div>
+                        </Card>
+                    
 
-                <Card className={classes.root}>
+                )}
+                {/* <Card className={classes.root}>
                     <CardHeader
                         avatar={
                             <Avatar aria-label="recipe" className={classes.avatar}>
@@ -429,11 +602,12 @@ function Home() {
                             <Chip className={classes.commentChip} label="Few Left" />
                         </div>
                     </div>
-                </Card>
+                </Card> */}
 
             </div>
         </div>
     )
+    
 }
 
 export default Home;
