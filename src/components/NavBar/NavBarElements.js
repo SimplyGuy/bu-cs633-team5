@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { NavLink as Link } from 'react-router-dom';
 import {FaBars} from 'react-icons/fa';
 
+//reference: https://www.youtube.com/watch?v=Nl54MJDR2p8
 export const Nav = styled.nav`
 
     background: white;
@@ -10,10 +11,6 @@ export const Nav = styled.nav`
     justify-content: space-between;
     padding: 0.5rem calc((100vw - 1500px) / 2);
     z-index: 10;
-
-    //nav left and button right
-    // justify-content: flex-start;
-
 `;
 
 export const NavLink = styled(Link)`
@@ -56,10 +53,6 @@ export const NavMenu = styled.div`
     nav left and button right
     width: 100vw;
     white-space: no-wrap;
-
-    // @media screen and (max-width: 768px) {
-    //     display: none;
-    // }
 `;
 
 export const NavBtn = styled.nav`
@@ -80,14 +73,6 @@ export const NavBtn = styled.nav`
         transition: all 0.2s ease-in-out;
         background: #ABB94E;
     }
-
-    //nav left and button right
-    // justify-content: flex-end;
-    // width: 100vw;
-
-    // @media screen and (max-width: 768px) {
-    //     display: none;
-    // }
 `;
 
 export const NavBtnLink = styled(Link)`

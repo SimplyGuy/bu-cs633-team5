@@ -1,14 +1,10 @@
 import React from 'react';
 import Header from '../NavBar/Header';
 import TextField from '@material-ui/core/TextField';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
-
 import map from '../../images/map.png';
-
 
 const Contact = ({props}) => {
 
@@ -18,15 +14,14 @@ const Contact = ({props}) => {
 
   const [open, setOpen] = React.useState(false);
 
+  //handle click event for the submit button
   const handleClick = () => {
     setOpen(true);
+
   };
 
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
+  //handle close event for the snackbar
+  const handleClose = () => {
     setOpen(false);
   };
 
@@ -50,7 +45,7 @@ const Contact = ({props}) => {
            alignItems: 'center',
         }}>
           <img src={map} alt="map" style={{ height: "540px", width: "800px"}} />
-          <form style={{
+          <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -58,37 +53,26 @@ const Contact = ({props}) => {
             width: "500px",
             paddingLeft: '10px',
           }}>
-            <TextField style={{margin: '5px'}}  id="signInUserName" label="Username" variant="outlined" fullWidth={true}/>
+            <TextField style={{margin: '5px'}}  id="signInUserName" label="Email address" variant="outlined" fullWidth={true}/>
             <TextField style={{margin: '5px'}} id="signInPassword" label="Your comments" variant="outlined" multiline={true} minRows={16} fullWidth={true}/>
-            <button style=
-              {{width: '100px',
+            <button style={{
+                width: '100px',
                 height: '40px',
                 borderRadius: '8px',
                 border: 'white',
                 backgroundColor: '#ABB94E',
-                cursor: 'pointer',}
-                }
+                cursor: 'pointer',
+              }}
                 onClick={handleClick}>Send
             </button>
-            <Snackbar open={open} autoHideDuration={600000} onClose={handleClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+            <Snackbar open={open} autoHideDuration={6000} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
               <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
                 Success!
               </Alert>
             </Snackbar>
-          </form>
+          </div>
         </div>
       </div>
-
-      {/* <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '90vh'
-        }}
-      >
-        <h1>Contact</h1>
-      </div> */}
     </div>
   );
 };

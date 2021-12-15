@@ -1,20 +1,15 @@
 import React, {useEffect} from 'react';
 import useState from 'react-usestateref';
-
 import Header from '../NavBar/Header';
-import './Home.css';
 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Chip from '@material-ui/core/Chip';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
-
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -22,20 +17,23 @@ import FormControl from '@material-ui/core/FormControl';
 import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
-
-import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 
 function Home(props) {
 
-    const [mallTag, setMallTags, mallTagRef] = useState([]);
+    //state for the mall, product, status and area tags    
+    const [mallTag, setMallTags] = useState([]);
     const [statusTag, setStatusTags] = useState([]);
     const [productTag, setProductTags] = useState([]);
     const [areaTag, setAreaTags] = useState([]);
     
+    //state for initializing the post
     const [ifInit, setIfInit, ifInitRef] = useState(false);
-    const [userIdentity, setUserIdentity] = useState("Visitor");
+
+    //state for the sign in status
     const [ifSignIn, setIfSignIn, ifSignInRef] = useState(false);
+
+    //state for the search information from user
     const [searchContent, setSearchContent, searchContentRef] = useState({
         selectedContent: "",
         selectedMall: "",
@@ -43,6 +41,8 @@ function Home(props) {
         selectedProduct: "",
         selectedArea: "",
     });
+
+    //state for all posts and selected displayed posts
     const [allPosts, setAllPosts, allPostsRef] = useState([]);
     const [displayPosts, setDisplayPosts, displayPostsRef] = useState([]);
 
@@ -52,9 +52,9 @@ function Home(props) {
             setIfInit(true);
         }
         setIfSignIn(props.location.state ? props.location.state : false);
-        console.log(ifSignInRef.current);
     })
 
+    //function for handling the search content from the user
     const handleSearch = (event) => {
 
         let selectedContent = searchContentRef.current.selectedContent;
@@ -65,31 +65,30 @@ function Home(props) {
         let sortedPost = allPosts.filter((post) => {
             return post[1].includes(selectedContent);
         }).filter((post) => {
-            if (selectedMall) {
-                return post[2] == selectedMall;
+            if (selectedMall != '') {
+                return post[2] === selectedMall;
             }
             return post;
         }).filter((post) => {
-            if (selectedStatus) {
-                return post[3] == selectedStatus
+            if (selectedProduct != '') {
+                return post[3] === selectedProduct
             }
             return post;
         }).filter((post) => {
-            if (selectedProduct) {
-                return post[4] == selectedProduct
+            if (selectedStatus != '') {
+                return post[4] === selectedStatus
             }
             return post;
         }).filter((post) => {
-            if (selectedArea) {
-                return post[5] == selectedArea
+            if (selectedArea != '') {
+                return post[5] === selectedArea
             }
             return post;
         });
-        console.log(sortedPost);
         setDisplayPosts(sortedPost);
-        console.log(displayPostsRef);
     }
 
+    //function for initializing the state for all the posts and sorted displayed posts
     const initializePosts = () => {
 
         let postList = [];
@@ -102,6 +101,7 @@ function Home(props) {
         setDisplayPosts(postList);
     }
 
+    //function for deleting the selected post
     const handleDelete = (event) => {
         
         let index = event.target.getAttribute('index');
@@ -111,15 +111,15 @@ function Home(props) {
         setDisplayPosts(allPostsRef.current);
     }
 
+    //function for displaying the new posts from the user
     const sendSubmitContent = (data) => {
-        console.log(data);        
+        console.log(data);
         let formatData = [data.inputDate, data.inputContent, data.inputMall, data.inputProduct, data.inputStatus, data.inputArea];
         setAllPosts((prevState) => [formatData, ...prevState]);
-        console.log(allPostsRef.current);
         setDisplayPosts(allPostsRef.current);
-        console.log(displayPostsRef.current);
     }
 
+    //styling for each part of the page
     const useStyles = makeStyles((theme) => ({
         search: {
             backgroundColor: theme.palette.background.paper,
@@ -182,43 +182,7 @@ function Home(props) {
         },
     };
 
-    function getMallStyles(mall, mallList, theme) {
-        return {
-            fontWeight:
-                mallList.indexOf(mall) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
-
-    function getProductStyles(product, productList, theme) {
-        return {
-            fontWeight:
-                productList.indexOf(product) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
-
-    function getStatusStyles(status, statusList, theme) {
-        return {
-            fontWeight:
-                statusList.indexOf(status) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
-
-    function getAreaStyles(area, areaList, theme) {
-        return {
-            fontWeight:
-                areaList.indexOf(area) === -1
-                    ? theme.typography.fontWeightRegular
-                    : theme.typography.fontWeightMedium,
-        };
-    }
-
-    
+    //functions for saving the user text in post dialog
     const handleContentChange = (event) => {
         setSearchContent((prevState) => ({
             ...prevState,
@@ -226,6 +190,7 @@ function Home(props) {
             })
         );
     };
+    //functions for saving the user selected mall tag in post dialog
     const handleMallChange = (event) => {
         setMallTags(event.target.value);
         setSearchContent((prevState) => ({
@@ -234,6 +199,7 @@ function Home(props) {
             })
         );
     };
+    //functions for saving the user selected product tag in post dialog
     const handleProductChange = (event) => {
         setProductTags(event.target.value);
         setSearchContent((prevState) => ({
@@ -241,8 +207,8 @@ function Home(props) {
             selectedProduct: event.target.value
             })
         );
-
     };
+    //functions for saving the user selected status tag in post dialog
     const handleStatusChange = (event) => {
         setStatusTags(event.target.value);
         setSearchContent((prevState) => ({
@@ -252,6 +218,7 @@ function Home(props) {
         );
 
     };
+    //functions for saving the user selected area tag in post dialog
     const handleAreaChange = (event) => {
         setAreaTags(event.target.value);
         setSearchContent((prevState) => ({
@@ -262,65 +229,24 @@ function Home(props) {
 
     };
 
-    const handleMallChangeMultiple = (event) => {
-        const { options } = event.target;
-        const value = [];
-        for (let i = 0, l = options.length; i < l; i += 1) {
-            if (options[i].selected) {
-                value.push(options[i].value);
-            }
-        }
-        setMallTags(value);
-    };
-    const handleProductChangeMultiple = (event) => {
-        const { options } = event.target;
-        const value = [];
-        for (let i = 0, l = options.length; i < l; i += 1) {
-            if (options[i].selected) {
-                value.push(options[i].value);
-            }
-        }
-        setProductTags(value);
-    };
-    const handleStatusChangeMultiple = (event) => {
-        const { options } = event.target;
-        const value = [];
-        for (let i = 0, l = options.length; i < l; i += 1) {
-            if (options[i].selected) {
-                value.push(options[i].value);
-            }
-        }
-        setStatusTags(value);
-    };
-    const handleAreaChangeMultiple = (event) => {
-        const { options } = event.target;
-        const value = [];
-        for (let i = 0, l = options.length; i < l; i += 1) {
-            if (options[i].selected) {
-                value.push(options[i].value);
-            }
-        }
-        setAreaTags(value);
-    };
-
     const classes = useStyles();
-    const theme = useTheme();
 
+    //information for the inital posts
     const dateList = [
 
         "October 20th, 2021",
         "October 16th, 2021",
         "October 15th, 2021",
         "October 14th, 2021",
-    ]
-
+    ];
     const contentList = [
         "I went to walmart for blanket, and there are a lot",
         "I went to bestbuy for hand sanitizer, but there are not much left",
         "I went to CVS for laptop, but there are only two left",
         "I went to stop&shop for milk, there are only 0% fat ones"
-    ]
+    ];
 
+    //information for initial tag contents
     const mallTagList = [
 
         'None',
@@ -329,7 +255,6 @@ function Home(props) {
         'CVS',
         'Stop&Shop'
     ];
-
     const productTagList = [
 
         'None',
@@ -338,7 +263,6 @@ function Home(props) {
         'Laptop',
         'Milk'
     ];
-
     const statusTagList = [
         
         'None',
@@ -347,7 +271,6 @@ function Home(props) {
         'Few Left',
         'Only one type'
     ];
-
     const areaTagList = [
 
         'None',
@@ -377,7 +300,6 @@ function Home(props) {
                                     <InputLabel id="mutiple-mall-label" style={{ fontSize: '15px' }}>Mall Tag</InputLabel>
                                     <Select
                                         id="mall-mutiple-chip"
-                                        // multiple
                                         value={mallTag}
                                         onChange={handleMallChange}
                                         input={<Input id="select-multiple-chip" />}
@@ -389,7 +311,7 @@ function Home(props) {
                                         MenuProps={MenuProps}
                                     >   
                                         {mallTagList.map((mall) => (
-                                            <MenuItem key={mall} value={mall == 'None' ? '' : mall}>
+                                            <MenuItem key={mall} value={mall === 'None' ? '' : mall}>
                                                 <Checkbox checked={mallTag.indexOf(mall) > -1} />
                                                 <ListItemText primary={mall} />
                                             </MenuItem>
@@ -400,7 +322,6 @@ function Home(props) {
                                     <InputLabel id="mutiple-product-label" style={{ fontSize: '15px' }}>Product Tag</InputLabel>
                                     <Select
                                         id="product-mutiple-chip"
-                                        // multiple
                                         value={productTag}
                                         onChange={handleProductChange}
                                         input={<Input id="select-multiple-chip" />}
@@ -412,7 +333,7 @@ function Home(props) {
                                         MenuProps={MenuProps}
                                     >
                                         {productTagList.map((product) => (
-                                            <MenuItem key={product} value={product == 'None' ? '' : product}>
+                                            <MenuItem key={product} value={product === 'None' ? '' : product}>
                                                 <Checkbox checked={productTag.indexOf(product) > -1} />
                                                 <ListItemText primary={product} />
                                             </MenuItem>
@@ -423,7 +344,6 @@ function Home(props) {
                                     <InputLabel id="mutiple-status-label" style={{ fontSize: '15px' }}>Status Tag</InputLabel>
                                     <Select
                                         id="status-mutiple-chip"
-                                        // multiple
                                         value={statusTag}
                                         onChange={handleStatusChange}
                                         input={<Input id="select-multiple-chip" />}
@@ -435,7 +355,7 @@ function Home(props) {
                                         MenuProps={MenuProps}
                                     >
                                         {statusTagList.map((status) => (
-                                            <MenuItem key={status} value={status == 'None' ? '' : status}>
+                                            <MenuItem key={status} value={status === 'None' ? '' : status}>
                                                 <Checkbox checked={statusTag.indexOf(status) > -1} />
                                                 <ListItemText primary={status} />
                                             </MenuItem>
@@ -446,7 +366,6 @@ function Home(props) {
                                     <InputLabel id="mutiple-status-label" style={{ fontSize: '15px' }}>Area Tag</InputLabel>
                                     <Select
                                         id="status-mutiple-chip"
-                                        // multiple
                                         value={areaTag}
                                         onChange={handleAreaChange}
                                         input={<Input id="select-multiple-chip" />}
@@ -458,7 +377,7 @@ function Home(props) {
                                         MenuProps={MenuProps}
                                     >
                                         {areaTagList.map((area) => (
-                                            <MenuItem key={area} value={area == 'None' ? '' : area}>
+                                            <MenuItem key={area} value={area === 'None' ? '' : area}>
                                                 <Checkbox checked={areaTag.indexOf(area) > -1} />
                                                 <ListItemText primary={area} />
                                             </MenuItem>
@@ -466,16 +385,6 @@ function Home(props) {
                                     </Select>
                                 </FormControl>
                             </div>
-                            {/* <Button
-                                color="primary"
-                                variant="contained"
-                                style={{
-                                    height: '40px',
-                                    fontSize: '12px',
-                                    marginRight: '14px',
-                                    marginTop: '30px',
-                                }}
-                            >Search</Button> */}
                             <button className={classes.searchBtn} onClick={handleSearch}>Search</button>
                         </div>
                     </div>
@@ -499,115 +408,18 @@ function Home(props) {
                             <Divider variant="middle" />
                             <div className={classes.section2}>
                                 <div>
-                                    <Chip className={classes.commentChip} label={post[2]} />
-                                    <Chip className={classes.commentChip} label={post[3]} />
-                                    <Chip className={classes.commentChip} label={post[4]} />
-                                    <Chip className={classes.commentChip} label={post[5]} />
+                                    { post[2] ? <Chip className={classes.commentChip} label={post[2]} /> : ''}
+                                    { post[3] ? <Chip className={classes.commentChip} label={post[3]} /> : ''}
+                                    { post[4] ? <Chip className={classes.commentChip} label={post[4]} /> : ''}
+                                    { post[5] ? <Chip className={classes.commentChip} label={post[5]} /> : ''}
                                 </div>
-                                {ifSignInRef.current.role == "admin" ? <button index={index} className={classes.deleteBtn} onClick={handleDelete}>Delete</button> : ''}
+                                { ifSignInRef.current.role === "admin" ? <button index={index} className={classes.deleteBtn} onClick={handleDelete}>Delete</button> : ''}
                             </div>
                         </Card>
-                    
-
                 )}
-                {/* <Card className={classes.root}>
-                    <CardHeader
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                U
-                            </Avatar>
-                        }
-                        subheader="October 14th, 2021"
-                    />
-                    <CardContent>
-                        <Typography variant="body1" color="textPrimary" component="p">
-                            I went to walmart for blanket, but I couldn't find any of it
-                        </Typography>
-                    </CardContent>
-                    <Divider variant="middle" />
-                    <div className={classes.section2}>
-                        <div>
-                            <Chip className={classes.commentChip} label="Walmart" />
-                            <Chip className={classes.commentChip} label="Blanket" />
-                            <Chip className={classes.commentChip} label="Shortage" />
-                        </div>
-                    </div>
-                </Card>
-
-                <Card className={classes.root}>
-                    <CardHeader
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                U
-                            </Avatar>
-                        }
-                        subheader="October 15th, 2021"
-                    />
-                    <CardContent>
-                        <Typography variant="body1" color="textPrimary" component="p">
-                            I went to CVS for hand sanitizer, but there are only 5ml ones
-                        </Typography>
-                    </CardContent>
-                    <Divider variant="middle" />
-                    <div className={classes.section2}>
-                        <div>
-                            <Chip className={classes.commentChip} label="CVS" />
-                            <Chip className={classes.commentChip} label="Hand Sanitizer" />
-                            <Chip className={classes.commentChip} label="Only One Type" />
-                        </div>
-                    </div>
-                </Card>
-
-                <Card className={classes.root}>
-                    <CardHeader
-                        avatar={
-                            <Avatar aria-label="recipe" className={classes.avatar}>
-                                U
-                            </Avatar>
-                        }
-                        subheader="October 16th, 2021"
-                    />
-                    <CardContent>
-                        <Typography variant="body1" color="textPrimary" component="p">
-                            I went to bestbuy for laptop, there are plenty of them
-                        </Typography>
-                    </CardContent>
-                    <Divider variant="middle" />
-                    <div className={classes.section2}>
-                        <div>
-                            <Chip className={classes.commentChip} label="Bestbuy" />
-                            <Chip className={classes.commentChip} label="Laptop" />
-                            <Chip className={classes.commentChip} label="Sufficient" />
-                        </div>
-                    </div>
-                </Card>
-
-                <Card className={classes.root}>
-                    <CardHeader
-                        avatar={
-                            <Avatar className={classes.avatar}>U</Avatar>
-                        }
-                        subheader="October 20th, 2021"
-                    />
-                    <CardContent>
-                        <Typography variant="body1" color="textPrimary" component="p">
-                            I went to stop&shop for milk, there are only a few left
-                        </Typography>
-                    </CardContent>
-                    <Divider variant="middle" />
-                    <div className={classes.section2}>
-                        <div>
-                            <Chip className={classes.commentChip} label="Stop&Shop" />
-                            <Chip className={classes.commentChip} label="Milk" />
-                            <Chip className={classes.commentChip} label="Few Left" />
-                        </div>
-                    </div>
-                </Card> */}
-
             </div>
         </div>
     )
-    
 }
 
 export default Home;

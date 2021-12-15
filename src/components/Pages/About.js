@@ -1,8 +1,6 @@
 import React from 'react';
 import Header from '../NavBar/Header';
-
 import grocery1 from '../../images/grocery1.jpg';
-
 
 const About = () => {
   return (
@@ -42,18 +40,8 @@ const About = () => {
           buy is in or out of stock, and the price of the product. The whole service is provided for users by users, 
           meaning that it is you and your grocery pals who post content to the website, and thereby keeps each other posted. 
         </div>
-        <img src={grocery1} alt="grocery1" style={{}} />
+        <img src={grocery1} alt="grocery1"/>
       </div>
-      {/* <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '90vh'
-        }}
-      >
-        <h1>About</h1>
-      </div> */}
     </div>
   );
 };
